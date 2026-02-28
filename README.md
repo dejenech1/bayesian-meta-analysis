@@ -7,9 +7,9 @@ Frequentist and Bayesian meta-analysis of BCG vaccine trials.
 Raw data: data/raw/BCG_data.xlsx
 
 ## Analysis
-Main file: analysis/BN_analysis.Rmd
+Main file: analysis/RcodeFor Frequentist and Bayesian Meta-analysis.Rmd
 
 ## Reproducibility
 To reproduce:
 1. Install required packages
-2. Knit BN_analysis.Rmd
+2. Knit RcodeFor Frequentist and Bayesian Meta-analysis.Rmd
