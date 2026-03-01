@@ -55,11 +55,46 @@ head(BCGdat)
 
 
 ```{r}
+frm <- metagen(
+  TE = yi,
+  seTE = sqrt(vi),
+  studlab = paste(author, year),
+  data = BCGdat,
+  sm = "OR",
+  method.tau = "REML",
+  method.random.ci = "HK",
+  title = "BCG Vaccine Data"
+)
+
+par(cex = 0.7)  
+forest(frm,
+       layout = "RevMan",
+       col.square = "blue",
+       col.label.left = "blue",
+       col.diamond.random = "red",
+       cex = 0.7,          # study labels
+       fontsize = 6,       # text columns
+       digits = 2,
+       digits.stat = 2,
+       digits.se = 2,
+       digits.pval = 2,
+       digits.tau2 = 2,
+       digits.I2 = 2,
+       digits.Q = 2)
+```
+
+
+
+```{r}
 # DerSimonian-Laird random-effects model
 res_fe <- rma(yi, vi, data = BCGdat, method = "DL")
 
 summary(res_fe)
+
 ```
+
+
+
 
 ```{r}
 # 3. Frequentist Meta-Analysis
@@ -404,3 +439,4 @@ lines(x, ma012$dposterior(mu = x, predict = TRUE), col = "blue")
 ############################################################
 ```
 
+ 
