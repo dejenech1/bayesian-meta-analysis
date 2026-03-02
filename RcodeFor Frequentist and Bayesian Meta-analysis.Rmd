@@ -300,13 +300,15 @@ regtest(srem_mod)
 
 ```
 
+
+
 ```{r}
 ############################
 # 10. Bayesian Meta-Analysis
 ############################
 
 # Vague prior
-ma01 <- bayesmeta(
+ma00 <- bayesmeta(
   y = BCGdat[, "yi"],
   sigma = sqrt(BCGdat[, "vi"]),
   mu.prior.mean = 0,
@@ -314,11 +316,11 @@ ma01 <- bayesmeta(
   tau.prior = function(t) dhalfnormal(t, scale = 0.5)
 )
 
-print(ma01$summary, digits = 4)
+print(ma00$summary, digits = 4)
 
-forestplot(ma01, addfit = TRUE, showweights = TRUE)
+forestplot(ma00, addfit = TRUE, showweights = TRUE)
 
-funnel(ma01,
+funnel(ma00,
        level = c(90,95,99),
        shade = c("white","gray55","gray75"),
        refline = 0,
@@ -334,29 +336,35 @@ funnel(ma01,
 # 11. Prior Sensitivity
 ############################
 
-# Jeffreys prior
-ma011 <- bayesmeta(BCGdat, tau.prior = "Jeffreys")
-print(ma011$summary, digits = 4)
+# Model 1
 
-# Half-Cauchy prior
-ma012 <- bayesmeta(
+ma01 <- bayesmeta(
+  y = BCGdat$yi,
+  sigma = sqrt(BCGdat$vi),
+  mu.prior.mean = NA,
+  mu.prior.sd   = NA,
+  tau.prior = "Jeffreys")
+print(ma01$summary, digits = 4)
+
+
+# Model 2
+ma02 <- bayesmeta(
   y = BCGdat[, "yi"],
   sigma = sqrt(BCGdat[, "vi"]),
   mu.prior = c(mean = 0, sd = 25),
   tau.prior = function(x) dhalfcauchy(x, scale = 10)
 )
 
-print(ma012$summary, digits = 4)
+print(ma02$summary, digits = 4)
 
 ############################
-# 12. Informative Prior
-############################
+# Model3. Informative Prior
 
-ma013<-bayesmeta(y = BCGdat[, "yi"],
+ma03<-bayesmeta(y = BCGdat[, "yi"],
   sigma = sqrt(BCGdat[, "vi"]),
   mu.prior = c(mean = 0, sd = 4),
   tau.prior = function(x) dhalfcauchy(x, scale = 0.5))
-print(ma013$summary, digits = 4)
+print(ma03$summary, digits = 4)
 
 tp <- TurnerEtAlPrior(
   outcome = "surgical",
@@ -364,28 +372,28 @@ tp <- TurnerEtAlPrior(
   comparator2 = "placebo / control"
 )
 
-ma014 <- bayesmeta(
+ma04 <- bayesmeta(
   BCGdat,
   mu.prior.mean = 0,
   mu.prior.sd = 4,
   tau.prior = tp$dprior
 )
 
-print(ma014$summary, digits = 4)
+print(ma04$summary, digits = 4)
 
 
 ```
 
 ```{r}
-forest(ma014, addfit = TRUE, showweights = TRUE)
-forest(ma014,addpred=TRUE,addfit=TRUE,showweights=T,
+forest(ma04, addfit = TRUE, showweights = TRUE)
+forest(ma04,addpred=TRUE,addfit=TRUE,showweights=T,
        xlim=c(-5,5), at=seq(-1,1,by=1), shade="zebra",
        cex=0.9, header="Study Authors",col="blue",colshade="lightgrey")
 
 
 
 
-funnel(ma014,
+funnel(ma04,
        level = c(90,95,99),
        shade = c("white","gray55","gray75"),
        refline = 0,
@@ -399,12 +407,12 @@ funnel(ma014,
 # 13. Posterior Inference
 ############################
 
-ma014$post.interval(tau.level = 0.95)
-ma014$post.interval(mu.level = 0.95)
+ma04$post.interval(tau.level = 0.95)
+ma04$post.interval(mu.level = 0.95)
 
-plot(ma014, main = "Posterior Distribution")
+plot(ma04, main = "Posterior Distribution")
 
-ma014$rposterior(n = 10)
+ma04$rposterior(n = 10)
 
 
 ```
@@ -415,7 +423,7 @@ ma014$rposterior(n = 10)
 # 14. Shrinkage Estimates
 ############################
 
-she <- ma014$theta[,1:4]
+she <- ma04$theta[,1:4]
 print(she, digits = 4)
 
 ############################
@@ -424,19 +432,18 @@ print(she, digits = 4)
 
 x <- seq(-3.5, 0.5, length = 200)
 
-plot(x, ma012$dposterior(mu = x),
+plot(x, ma02$dposterior(mu = x),
      type = "n",
      xlab = "Effect",
      ylab = "Density")
 
 abline(h = 0, v = 0, col = "gray")
 
-lines(x, ma012$dposterior(mu = x), col = "red")
-lines(x, ma012$dposterior(mu = x, predict = TRUE), col = "blue")
+lines(x, ma02$dposterior(mu = x), col = "red")
+lines(x, ma02$dposterior(mu = x, predict = TRUE), col = "blue")
 
 ############################################################
 # End of Script
 ############################################################
-```
 
- 
+```
